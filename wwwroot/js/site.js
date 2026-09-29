@@ -1,4 +1,15 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿const inputContraseña = document.getElementById("contraseña");
+const msjContraseña = document.getElementById("msjContraseña");
 
-// Write your JavaScript code.
+function verificarContraseña(){
+    console.log("entró")
+    let contraseñaIngresada = document.getElementById("contraseña").value;
+
+    if (contraseñaIngresada.length < 8){
+        inputContraseña.style.borderColor = "red";
+        msjContraseña.innerHTML = "La contraseña debe tener como mínimo 8 caracteres";
+        msjContraseña.style.color = "red";
+        return false
+    }
+    return true
+}

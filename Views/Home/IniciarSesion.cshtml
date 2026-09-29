@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Iniciar Sesión</h3>
+                </div>
+                <div class="card-body p-4">
+                    @if(!string.IsNullOrEmpty(ViewBag.msj))
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            @ViewBag.msj
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    <form asp-action="IniciarSesion" method="post">
+                        <div class="mb-3">
+                            <label for="nombreUsuario" class="form-label">Nombre de usuario</label>
+                            <input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contraseña" class="form-label">Contraseña</label>
+                            <label for="contraseña" id="msjContraseña"></label>
+                            <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar sesión</button>
+                    </form>
+                    <hr>
+                    <p class="text-center mb-0">¿No tienes una cuenta? <a href="@Url.Action("Registrarse", "Home")" class="link-primary">Regístrate aquí</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
