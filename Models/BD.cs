@@ -6,7 +6,7 @@ namespace TPRedSocial.Models
 {
     public class BD
     {
-        private static string _connectionString = @"Server=localhost; DataBase=tpRedSocial;Integrated Security=True;TrustServerCertificate=True;";
+        private static string _connectionString = @"Server=localhost; DataBase=DBRedSocial;Integrated Security=True;TrustServerCertificate=True;";
 
         public string BuscarSesion(string nombreUsuario, string contraseña)
         {
@@ -55,7 +55,11 @@ namespace TPRedSocial.Models
 
         public List<Publicaciones> MostrarPublicaciones(){
             List<Publicaciones> publicaciones = new List<Publicaciones>();
-            string query = "SELECT * FROM Publicaciones";
+            string query = @"SELECT p.Id, p.Imagen, p.Titulo, p.Descripcion, p.FechaPublicacion, p.IdUsuario,
+                            u.NombreUsuario, u.Nombre, u.Apellido
+                            FROM Publicaciones p
+                            INNER JOIN Usuarios u ON p.IdUsuario = u.Id
+                            ORDER BY p.FechaPublicacion DESC";
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 publicaciones = connection.Query<Publicaciones>(query).ToList();
@@ -69,6 +73,86 @@ namespace TPRedSocial.Models
             {
                 connection.Execute(query, new { Imagen = publicacion.Imagen, Titulo = publicacion.Titulo, Descripcion = publicacion.Descripcion, FechaPublicacion = publicacion.FechaPublicacion, NombreUsuario = publicacion.NombreUsuario });
             }
+        }
+
+        // Métodos para likes
+        public bool AgregarLike(int idPublicacion, int idUsuario)
+        {
+            try
+            {
+                string query = "INSERT INTO PublicacionesMeGusta (IdPublicación, IdUsuario) VALUES (@IdPublicacion, @IdUsuario)";
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Execute(query, new { IdPublicacion = idPublicacion, IdUsuario = idUsuario });
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool EliminarLike(int idPublicacion, int idUsuario)
+        {
+            try
+            {
+                string query = "DELETE FROM PublicacionesMeGusta WHERE IdPublicación = @IdPublicacion AND IdUsuario = @IdUsuario";
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Execute(query, new { IdPublicacion = idPublicacion, IdUsuario = idUsuario });
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool UsuarioYaLikeó(int idPublicacion, int idUsuario)
+        {
+            string query = "SELECT COUNT(*) FROM PublicacionesMeGusta WHERE IdPublicación = @IdPublicacion AND IdUsuario = @IdUsuario";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                int count = connection.QueryFirstOrDefault<int>(query, new { IdPublicacion = idPublicacion, IdUsuario = idUsuario });
+                return count > 0;
+            }
+        }
+
+        public int ObtenerCantidadLikes(int idPublicacion)
+        {
+            string query = "SELECT COUNT(*) FROM PublicacionesMeGusta WHERE IdPublicación = @IdPublicacion";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                return connection.QueryFirstOrDefault<int>(query, new { IdPublicacion = idPublicacion });
+            }
+        }
+
+        // Métodos para comentarios
+        public void CrearComentario(Comentarios comentario)
+        {
+            string query = "INSERT INTO Comentarios (IdPublicacion, IdUsuarioComenta, Texto, FechaComentario) VALUES (@IdPublicacion, @IdUsuarioComenta, @Texto, @FechaComentario)";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Execute(query, new { IdPublicacion = comentario.IdPublicacion, IdUsuarioComenta = comentario.IdUsuarioComenta, Texto = comentario.Texto, FechaComentario = comentario.FechaComentario });
+            }
+        }
+
+        public List<Comentarios> ObtenerComentarios(int idPublicacion)
+        {
+            List<Comentarios> comentarios = new List<Comentarios>();
+            string query = @"SELECT c.Id, c.IdPublicacion, c.IdUsuarioComenta, c.Texto, c.FechaComentario,
+                            u.NombreUsuario, u.Nombre, u.Apellido
+                            FROM Comentarios c
+                            INNER JOIN Usuarios u ON c.IdUsuarioComenta = u.Id
+                            WHERE c.IdPublicacion = @IdPublicacion
+                            ORDER BY c.FechaComentario ASC";
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                comentarios = connection.Query<Comentarios>(query, new { IdPublicacion = idPublicacion }).ToList();
+            }
+            return comentarios;
         }
     }
 }

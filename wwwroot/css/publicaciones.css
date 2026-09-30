@@ -1,0 +1,68 @@
+.card {
+    border-radius: 0;
+}
+
+.btn-link:hover {
+    opacity: 0.7;
+}
+
+.btn-like.liked {
+    color: #e74c3c !important;
+}
+
+.btn-like.liked i {
+    font-weight: 900;
+}
+
+.comentario-item {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 0;
+    font-size: 13px;
+}
+
+.comentario-item:last-child {
+    border-bottom: none;
+}
+
+.comentario-autor {
+    font-weight: 600;
+    color: #0f1419;
+}
+
+.comentario-usuario {
+    color: #536471;
+    font-size: 12px;
+}
+
+.comentario-texto {
+    color: #0f1419;
+    margin-top: 5px;
+}
+
+.comentario-fecha {
+    color: #536471;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.btn-like {
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-like:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .col-md-8 {
+        max-width: 100%;
+    }
+}

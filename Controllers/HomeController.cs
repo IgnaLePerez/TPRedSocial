@@ -7,10 +7,12 @@ namespace TPRedSocial.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     public IActionResult Index()
@@ -20,7 +22,8 @@ public class HomeController : Controller
         }
         BD bd = new BD();
         ViewBag.user = bd.MostrarUsuario(int.Parse(HttpContext.Session.GetString("id")));
-        return View();   
+        List<Publicaciones> publicaciones = bd.MostrarPublicaciones();
+        return View(publicaciones);   
     }
 
     public IActionResult VistaIniciarSesion(){
@@ -58,7 +61,7 @@ public class HomeController : Controller
     public IActionResult RegistrarDatos(string nombreUsuario, string contraseña, string nombre, string apellido){
         BD bd = new BD();
         if (bd.ValidarNombreUsuario(nombreUsuario)){
-            Usuario user = new Usuario(nombreUsuario, contraseña, nombre, apellido, 0);
+            Usuario user = new Usuario(0, nombreUsuario, contraseña, nombre, apellido);
             bd.CrearUsuario(user);
             HttpContext.Session.SetString("id", bd.BuscarSesion(nombreUsuario, contraseña));
             return RedirectToAction("Index");
@@ -76,15 +79,80 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult PostCrearPublicacion(string imagen, string titulo, string descripcion){
+    [HttpPost]
+    public IActionResult PostCrearPublicacion(IFormFile imagen, string titulo, string descripcion){
         if (HttpContext.Session.GetString("id") == null){
             return RedirectToAction("VistaIniciarSesion");
         }
         BD bd = new BD();
         ViewBag.user = bd.MostrarUsuario(int.Parse(HttpContext.Session.GetString("id")));
-        Publicaciones publicacion = new Publicaciones(imagen, titulo, descripcion, DateTime.Now, ViewBag.user.nombreUsuario);
+
+        string rutaCarpeta = Path.Combine(_env.WebRootPath, "imagenes");
+        if (!Directory.Exists(rutaCarpeta))
+            Directory.CreateDirectory(rutaCarpeta);
+
+        string rutaCompleta = Path.Combine(rutaCarpeta, imagen.FileName);
+        using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+        {
+            imagen.CopyTo(stream);
+        }
+        Publicaciones publicacion = new Publicaciones(imagen.FileName, titulo, descripcion, DateTime.Now, ViewBag.user.nombreUsuario);
         bd.CrearPublicacion(publicacion);
         return View("Index");
+    }
+
+    [HttpPost]
+    public IActionResult TogglearLike([FromBody] LikeRequest request)
+    {
+        if (HttpContext.Session.GetString("id") == null)
+            return Unauthorized();
+
+        if (request == null || request.IdPublicacion <= 0)
+            return BadRequest();
+
+        int idUsuario = int.Parse(HttpContext.Session.GetString("id"));
+        BD bd = new BD();
+
+        if (bd.UsuarioYaLikeó(request.IdPublicacion, idUsuario))
+        {
+            bd.EliminarLike(request.IdPublicacion, idUsuario);
+        }
+        else
+        {
+            bd.AgregarLike(request.IdPublicacion, idUsuario);
+        }
+
+        int cantidadLikes = bd.ObtenerCantidadLikes(request.IdPublicacion);
+        bool usuarioYaLikeó = bd.UsuarioYaLikeó(request.IdPublicacion, idUsuario);
+
+        return Json(new { cantidadLikes = cantidadLikes, usuarioYaLikeó = usuarioYaLikeó });
+    }
+
+    [HttpPost]
+    public IActionResult AgregarComentario([FromBody] ComentarioRequest request)
+    {
+        if (HttpContext.Session.GetString("id") == null)
+            return Unauthorized();
+
+        if (request == null || request.IdPublicacion <= 0 || string.IsNullOrWhiteSpace(request.Texto))
+            return BadRequest();
+
+        int idUsuario = int.Parse(HttpContext.Session.GetString("id"));
+        BD bd = new BD();
+
+        Comentarios comentario = new Comentarios(request.IdPublicacion, idUsuario, request.Texto.Trim(), DateTime.Now);
+        bd.CrearComentario(comentario);
+
+        List<Comentarios> comentarios = bd.ObtenerComentarios(request.IdPublicacion);
+        return Json(comentarios);
+    }
+
+    [HttpGet]
+    public IActionResult ObtenerComentarios(int idPublicacion)
+    {
+        BD bd = new BD();
+        List<Comentarios> comentarios = bd.ObtenerComentarios(idPublicacion);
+        return Json(comentarios);
     }
 
     public IActionResult Privacy()
@@ -96,5 +164,16 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    public class LikeRequest
+    {
+        public int IdPublicacion { get; set; }
+    }
+
+    public class ComentarioRequest
+    {
+        public int IdPublicacion { get; set; }
+        public string Texto { get; set; }
     }
 }

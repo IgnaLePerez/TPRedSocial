@@ -141,3 +141,5 @@ C:\TPRedSocial\obj\Debug\net9.0\refint\TPRedSocial.dll
 C:\TPRedSocial\obj\Debug\net9.0\TPRedSocial.pdb
 C:\TPRedSocial\obj\Debug\net9.0\TPRedSocial.genruntimeconfig.cache
 C:\TPRedSocial\obj\Debug\net9.0\ref\TPRedSocial.dll
+C:\TPRedSocial\obj\Debug\net9.0\compressed\y2iqfyzthb-d0nih26zve.gz
+C:\TPRedSocial\obj\Debug\net9.0\compressed\zn6b307ww7-g6caif2ske.gz
