@@ -66,3 +66,83 @@
         max-width: 100%;
     }
 }
+
+/* Styles moved from Views/Home/Index.cshtml */
+.publicacion-card {
+    border: 1px solid #e1e8ed;
+}
+.publicacion-card .card-header {
+    padding: 12px 16px;
+}
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e1e8ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+.avatar-initial {
+    font-weight: 600;
+    color: #0f1419;
+}
+.user-name {
+    font-weight: 600;
+    color: #0f1419;
+}
+.user-meta {
+    font-size: 13px;
+    color: #536471;
+}
+.publicacion-img {
+    max-height: 500px;
+    object-fit: cover;
+}
+.publicacion-card .card-body {
+    padding: 12px 16px;
+}
+.publicacion-actions {
+    display: flex;
+    gap: 16px;
+    font-size: 20px;
+}
+.icon-btn {
+    color: #0f1419;
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+.likes-small {
+    color: #0f1419;
+    font-weight: 600;
+}
+.publicacion-title {
+    color: #0f1419;
+    margin-bottom: 8px;
+}
+.publicacion-text {
+    color: #536471;
+    margin-bottom: 8px;
+}
+.publicacion-date {
+    color: #536471;
+}
+.comentarios-container {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.comentarios-modal {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+.form-comentario {
+    width: 100%;
+}
+.texto-comentario {
+    font-size: 14px;
+}

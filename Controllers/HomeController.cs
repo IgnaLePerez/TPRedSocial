@@ -22,8 +22,8 @@ public class HomeController : Controller
         }
         BD bd = new BD();
         ViewBag.user = bd.MostrarUsuario(int.Parse(HttpContext.Session.GetString("id")));
-        List<Publicaciones> publicaciones = bd.MostrarPublicaciones();
-        return View(publicaciones);   
+        ViewBag.publicaciones = bd.MostrarPublicaciones();
+        return View();   
     }
 
     public IActionResult VistaIniciarSesion(){
@@ -98,7 +98,7 @@ public class HomeController : Controller
         }
         Publicaciones publicacion = new Publicaciones(imagen.FileName, titulo, descripcion, DateTime.Now, ViewBag.user.nombreUsuario);
         bd.CrearPublicacion(publicacion);
-        return View("Index");
+        return RedirectToAction("Index");
     }
 
     [HttpPost]
