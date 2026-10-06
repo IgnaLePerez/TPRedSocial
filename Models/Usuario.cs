@@ -29,5 +29,10 @@ namespace TPRedSocial.Models
             this.apellido = apellido;
             this.id = id;
         }
+
+        public Usuario()
+        {
+
+        }
     }
 }

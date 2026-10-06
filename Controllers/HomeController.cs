@@ -101,31 +101,23 @@ public class HomeController : Controller
         return RedirectToAction("Index");
     }
 
-    [HttpPost]
-    public IActionResult TogglearLike([FromBody] LikeRequest request)
+    public int TogglearLike(int IdPublicacion)
     {
-        if (HttpContext.Session.GetString("id") == null)
-            return Unauthorized();
-
-        if (request == null || request.IdPublicacion <= 0)
-            return BadRequest();
-
         int idUsuario = int.Parse(HttpContext.Session.GetString("id"));
         BD bd = new BD();
 
-        if (bd.UsuarioYaLikeó(request.IdPublicacion, idUsuario))
+        if (bd.UsuarioYaLikeó(IdPublicacion, idUsuario))
         {
-            bd.EliminarLike(request.IdPublicacion, idUsuario);
+            bd.EliminarLike(IdPublicacion, idUsuario);
         }
         else
         {
-            bd.AgregarLike(request.IdPublicacion, idUsuario);
+            bd.AgregarLike(IdPublicacion, idUsuario);
         }
 
-        int cantidadLikes = bd.ObtenerCantidadLikes(request.IdPublicacion);
-        bool usuarioYaLikeó = bd.UsuarioYaLikeó(request.IdPublicacion, idUsuario);
+        int cantidadLikes = bd.ObtenerCantidadLikes(IdPublicacion);
 
-        return Json(new { cantidadLikes = cantidadLikes, usuarioYaLikeó = usuarioYaLikeó });
+        return cantidadLikes;
     }
 
     [HttpPost]

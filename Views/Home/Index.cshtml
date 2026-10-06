@@ -22,7 +22,7 @@
                         <div class="card-header bg-white border-bottom">
                             <div class="d-flex align-items-center">
                                 <div class="avatar-placeholder">
-                                    <span class="avatar-initial">@publicacion.Nombre()</span>
+                                    <span class="avatar-initial">@publicacion.Nombre</span>
                                 </div>
                                 <div>
                                     <div class="user-name">
@@ -36,16 +36,13 @@
                         </div>
 
                         <!-- Imagen de la publicación -->
-                        @if (!string.IsNullOrEmpty(publicacion.Imagen))
-                        {
-                            <img src="/imagenes/@publicacion.Imagen" class="card-img-top publicacion-img" alt="Publicación">
-                        }
+                        <img src="/imagenes/@publicacion.Imagen" class="card-img-top publicacion-img" alt="Publicación">
 
                         <!-- Contenido de la publicación -->
                         <div class="card-body">
                             <!-- Botones de interacción -->
                             <div class="mb-3 publicacion-actions">
-                                <button class="btn btn-link p-0 btn-like icon-btn" data-publicacion-id="@publicacion.Id">
+                                <button class="btn btn-link p-0 btn-like icon-btn" onclick="DarLike(@publicacion.Id)">
                                     <i class="far fa-heart"></i>
                                 </button>
                                 <button class="btn btn-link p-0 btn-comentario icon-btn" data-publicacion-id="@publicacion.Id" data-bs-toggle="modal" data-bs-target="#modalComentarios@publicacion.Id">
@@ -59,7 +56,7 @@
                             <!-- Contador de likes -->
                             <div class="mb-2">
                                 <small class="likes-small">
-                                    <span class="likes-count-@publicacion.Id">0</span> Me gusta
+                                    <span class="likes-count-@publicacion.Id" id="contadorLikes">0</span> Me gusta
                                 </small>
                             </div>
 
